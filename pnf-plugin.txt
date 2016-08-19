@@ -1,0 +1,61 @@
+Option 1 - SSE Notifications
+============================
+ 
+- Authenticate with our keystone: Get TOKEN from IAM server
+
+- Call SSE API to subscribe to the events:
+  - curl http://<sse-ip-addr>/streams/csp/$TOKEN
+ 
+- Create your own eventsource to handle the browser events
+  - Event source wiki: http://www.html5rocks.com/en/tutorials/eventsource/basics/
+ 
+- Sample event message received:
+  - event: message
+  - data:  {"event-time":"2016-04-15 10:04:46.723367",  
+            "csas:service-state-change":{
+              "new_state": "instantiating", 
+              "instanceid": "78f3d518-e985-40ba-b22a-29432207938e", 
+              "app_point_path": "7850cafd-f7b9-4672-bd80-de19155e0ff3",      
+              "tenantid": "57f5a58b584d42dc8edc386334a48ef6", 
+              "app_point_type": "customer-internet", 
+              "customerid": "22958665-968f-447a-95bf-6961ccf2971f"} 
+           }
+  - Filter on "csas:service-state-change"
+ 
+ 
+Option 2 - AMQP Messages
+========================
+ 
+- Subscribe to RabbitMQ AMQP exchange
+- Sample code shown below
+- Filter on "csas:service-state-change"
+ 
+
+
+#!/usr/bin/env python
+import pika
+import sys
+ 
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_host, port=rabbitmq_port))
+channel = connection.channel()
+ 
+channel.exchange_declare(exchange='message', type='topic')
+ 
+result = channel.queue_declare(exclusive=True)
+queue_name = result.method.queue
+ 
+channel.queue_bind(exchange='message',
+                   queue=queue_name,
+                   routing_key='csas')
+ 
+ 
+def callback(ch, method, properties, body):
+    print(" [x] %r:%r" % (method.routing_key, body))
+ 
+channel.basic_consume(callback,
+                      queue=queue_name,
+                      no_ack=True)
+ 
+channel.start_consuming()
+ 
+ 
