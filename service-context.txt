@@ -1,0 +1,113 @@
+The following is a proposed YANG model for a retrieving service context, followed by sample input/output
+
+
+YANG MODEL
+==========
+ 
+rpc get-service-context {
+  description
+    "Get the context for a service instance.";
+  input {
+    leaf service_instance_uuid {
+      type yang:uuid;
+      mandatory true;
+    }
+  }
+  output {
+    leaf user_name {
+      type string;
+      description
+        "user name from the token";
+    }
+    container tenant_info {
+      description
+        "Return tenant-specific information.";
+      leaf-list tenant_fq_name {
+        type string;
+      }
+      leaf tenant_uuid {
+        type yang:uuid;
+      }
+      container tenant_properties {
+        description
+          "tenant-level context properties in JSON format";
+        uses properties;
+      }
+    }
+    container site_info {
+      description
+        "Return site-specific information.";
+      leaf-list site_fq_name {
+        type string;
+      }
+      leaf site_uuid {
+        type yang:uuid;
+      }
+      container site_properties {
+        description
+          "site-level context properties in JSON format";
+        uses properties;
+      }
+    }
+    container pnf_info {
+      description
+        "Return pnf-specific information.";
+      leaf pnf_uuid {
+        type yang:uuid;
+      }
+    }
+    container service_info {
+      description
+        "Return service-specific information.";
+      leaf-list service_fq_name {
+        type string;
+      }
+      leaf service_uuid {
+        type yang:uuid;
+      }
+    }
+  }
+}
+ 
+EXAMPLE:
+========
+ 
+{
+    "input": {
+      "service_instance_uuid": "f4ae15ac-dfdd-426e-8fad-cacb2bedc845"
+    }
+}
+ 
+{
+         "output": {
+                   "user_name": "test-user-name",
+                   "pnf_info": {
+                            "pnf_uuid": "309ebc86-888a-431e-a7ad-ccba8606ffa3"
+                   },
+                   "tenant_info": {
+                            "tenant_fq_name": ["default-domain", "customer-jpw-1", "customer-jpw-1"],
+                            "tenant_uuid": "209ebc86-777a-431f-a7ad-ccba8606eea2",
+                            "tenant_properties": {
+                                     "property": [{
+                                               "name": "internet_id",
+                                               "value": "7ab765c5-1cbc-4471-b3cb-a38272ae344a"
+                                     }]
+                            }
+                   },
+                   "service_info": {
+                            "service_fq_name": ["default-domain", "customer-jpw-1", "customer-jpw-1", "service-jpw-1"],
+                            "service_uuid": "f4ae15ac-dfdd-426e-8fad-cacb2bedc845"
+                   },
+                   "site_info": {
+                            "site_uuid": "c54dbfab-b759-43a2-b0fd-b5c1b48463ef",
+                            "site_fq_name": ["default-domain", "customer-jpw-1", "customer-jpw-1", "site-jpw-1"],
+                            "site_properties": {
+                                     "property": [{
+                                               "name": "site_vpn_id",
+                                               "value": "8ef765c5-1cbc-4471-b3cb-a38272ae355b"
+                                     }]
+                            }
+                   }
+         }
+}
+ 
