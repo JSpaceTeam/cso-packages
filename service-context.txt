@@ -101,7 +101,13 @@ EXAMPLE:
                    },
                    "service_info": {
                             "service_fq_name": ["default-domain", "customer-jpw-1", "customer-jpw-1", "service-jpw-1"],
-                            "service_uuid": "f4ae15ac-dfdd-426e-8fad-cacb2bedc845"
+                            "service_uuid": "f4ae15ac-dfdd-426e-8fad-cacb2bedc845",
+                             "service_properties": {
+                                     "property": [{
+                                               "name": "mgmt_id",
+                                               "value": "9ef765c5-1cbc-4471-b3cb-a38272ae311b"
+                                     }]
+                            }
                    },
                    "site_info": {
                             "site_uuid": "c54dbfab-b759-43a2-b0fd-b5c1b48463ef",
