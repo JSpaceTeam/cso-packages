@@ -65,6 +65,11 @@ rpc get-service-context {
       leaf service_uuid {
         type yang:uuid;
       }
+      container service_properties {
+        description
+          "service-level context properties in JSON format";
+        uses properties;
+      }
     }
   }
 }
